@@ -1,25 +1,21 @@
 import { ReactNode } from 'react';
+import { Head } from '@inertiajs/react';
 
 interface Props {
     title: string;
-    description?: string;
     action?: ReactNode;
 }
 
-export default function PageHeader({ title, description, action }: Props) {
+export default function PageHeader({ title, action }: Props) {
     return (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-            <div>
-                <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
-                {description && (
-                    <p className="text-gray-500 text-sm mt-1">{description}</p>
-                )}
-            </div>
-            {action && (
-                <div>
-                    {action}
+        <header className="bg-surface border-b border-border">
+            <Head title={title} />
+            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                <div className="flex justify-between items-center">
+                    <h2 className="font-semibold text-xl text-text leading-tight">{title}</h2>
+                    {action && <div>{action}</div>}
                 </div>
-            )}
-        </div>
+            </div>
+        </header>
     );
 }

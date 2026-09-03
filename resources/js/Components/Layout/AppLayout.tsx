@@ -1,21 +1,22 @@
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, ReactNode } from 'react';
 import NavBar from './NavBar';
-import { Head } from '@inertiajs/react';
+import PageHeader from './PageHeader';
 
 interface Props {
     title?: string;
+    headerAction?: ReactNode;
 }
 
-export default function AppLayout({ title, children }: PropsWithChildren<Props>) {
+export default function AppLayout({ title, headerAction, children }: PropsWithChildren<Props>) {
     return (
-        <div className="min-h-screen bg-[#FAFAF8] flex flex-col md:flex-row">
-            {title && <Head title={title} />}
-            
+        <div className="min-h-screen bg-bg">
             <NavBar />
+            
+            {title && (
+                <PageHeader title={title} action={headerAction} />
+            )}
 
-            <main className="flex-1 w-full max-w-2xl mx-auto p-4 md:p-8 pb-24 md:pb-8">
-                {children}
-            </main>
+            <main>{children}</main>
         </div>
     );
 }
