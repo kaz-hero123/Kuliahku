@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Task;
 use Inertia\Inertia;
 
+use App\Http\Requests\TaskRequest;
+
 class TaskController extends Controller
 {
     public function index(Request $request)
@@ -32,46 +34,20 @@ class TaskController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(TaskRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'course_id' => 'required|exists:courses,id',
-            'deadline' => 'required|date',
-            'priority' => 'required|in:normal,urgent',
-            'status' => 'required|in:todo,in_progress,done',
-        ]);
-
-        if (!$request->user()->courses()->where('id', $validated['course_id'])->exists()) {
-            abort(403);
-        }
-
-        $request->user()->tasks()->create($validated);
+        $request->user()->tasks()->create($request->validated());
 
         return back()->with('success', 'Tugas berhasil ditambahkan.');
     }
 
-    public function update(Request $request, Task $task)
+    public function update(TaskRequest $request, Task $task)
     {
         if ($request->user()->id !== $task->user_id) {
             abort(403);
         }
 
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'course_id' => 'required|exists:courses,id',
-            'deadline' => 'required|date',
-            'priority' => 'required|in:normal,urgent',
-            'status' => 'required|in:todo,in_progress,done',
-        ]);
-
-        if (!$request->user()->courses()->where('id', $validated['course_id'])->exists()) {
-            abort(403);
-        }
-
-        $task->update($validated);
+        $task->update($request->validated());
 
         return back()->with('success', 'Tugas diperbarui.');
     }

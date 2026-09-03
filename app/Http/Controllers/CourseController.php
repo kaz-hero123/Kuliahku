@@ -6,34 +6,24 @@ use Illuminate\Http\Request;
 
 use App\Models\Course;
 
+use App\Http\Requests\CourseRequest;
+
 class CourseController extends Controller
 {
-    public function store(Request $request)
+    public function store(CourseRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'nullable|string|max:50',
-            'color' => 'required|string|max:7',
-        ]);
-
-        $request->user()->courses()->create($validated);
+        $request->user()->courses()->create($request->validated());
 
         return back()->with('success', 'Mata kuliah berhasil ditambahkan.');
     }
 
-    public function update(Request $request, Course $course)
+    public function update(CourseRequest $request, Course $course)
     {
         if ($request->user()->id !== $course->user_id) {
             abort(403);
         }
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'nullable|string|max:50',
-            'color' => 'required|string|max:7',
-        ]);
-
-        $course->update($validated);
+        $course->update($request->validated());
 
         return back()->with('success', 'Mata kuliah diperbarui.');
     }
