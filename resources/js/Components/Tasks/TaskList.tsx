@@ -1,43 +1,25 @@
-import { Course, Task } from '@/types';
+import { Task } from '@/types';
 import TaskItem from './TaskItem';
-import TaskForm from './TaskForm';
-import { useState } from 'react';
+import EmptyState from '@/Components/Shared/EmptyState';
 
 interface Props {
     tasks: Task[];
-    courses: Course[];
 }
 
-export default function TaskList({ tasks, courses }: Props) {
-    const [editingId, setEditingId] = useState<number | null>(null);
-
+export default function TaskList({ tasks }: Props) {
     if (tasks.length === 0) {
         return (
-            <div className="bg-white border border-gray-200 rounded-lg p-8 text-center shadow-sm">
-                <p className="text-gray-500">No tasks found. You're all caught up!</p>
-            </div>
+            <EmptyState 
+                title="Tidak ada tugas"
+                description="Kamu tidak memiliki tugas yang cocok dengan filter saat ini."
+            />
         );
     }
 
     return (
-        <div className="space-y-3">
+        <div className="divide-y divide-border">
             {tasks.map(task => (
-                editingId === task.id ? (
-                    <div key={task.id} className="bg-white border border-blue-200 rounded-lg p-4 shadow-sm">
-                        <TaskForm 
-                            courses={courses} 
-                            task={task} 
-                            onSuccess={() => setEditingId(null)} 
-                            onCancel={() => setEditingId(null)} 
-                        />
-                    </div>
-                ) : (
-                    <TaskItem 
-                        key={task.id} 
-                        task={task} 
-                        onEdit={() => setEditingId(task.id)} 
-                    />
-                )
+                <TaskItem key={task.id} task={task} />
             ))}
         </div>
     );

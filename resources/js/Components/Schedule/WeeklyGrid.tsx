@@ -1,74 +1,80 @@
 import { Schedule } from '@/types';
-import { Clock, MapPin, Trash2 } from 'lucide-react';
-import { router } from '@inertiajs/react';
+import CourseBadge from '@/Components/Shared/CourseBadge';
+import { useForm } from '@inertiajs/react';
 
-const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+interface Props {
+    schedules: Schedule[];
+    allowDelete?: boolean;
+}
 
-export default function WeeklyGrid({ schedules }: { schedules: Schedule[] }) {
-    const deleteSchedule = (id: number) => {
-        if (confirm('Are you sure you want to delete this schedule block?')) {
-            router.delete(route('schedules.destroy', id));
+export default function WeeklyGrid({ schedules, allowDelete = false }: Props) {
+    const { delete: destroy } = useForm();
+    
+    const days = [
+        { num: 0, name: 'Senin' },
+        { num: 1, name: 'Selasa' },
+        { num: 2, name: 'Rabu' },
+        { num: 3, name: 'Kamis' },
+        { num: 4, name: 'Jumat' },
+        { num: 5, name: 'Sabtu' },
+    ];
+
+    const getSchedulesForDay = (dayNum: number) => {
+        return schedules
+            .filter(s => s.day_of_week === dayNum)
+            .sort((a, b) => a.start_time.localeCompare(b.start_time));
+    };
+
+    const handleDeleteSchedule = (id: number) => {
+        if (confirm('Yakin ingin menghapus jadwal ini?')) {
+            destroy(route('schedules.destroy', id), { preserveScroll: true });
         }
     };
 
     return (
-        <div className="space-y-6">
-            {DAYS.map((day, index) => {
-                const daySchedules = schedules
-                    .filter(s => s.day_of_week === index)
-                    .sort((a, b) => a.start_time.localeCompare(b.start_time));
-
-                if (daySchedules.length === 0) return null;
-
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {days.map(day => {
+                const daySchedules = getSchedulesForDay(day.num);
+                const isToday = new Date().getDay() - 1 === day.num; // JS Date: 0=Sun. Our DB: 0=Mon
+                
                 return (
-                    <div key={day} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-                        <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-                            <h3 className="font-medium text-gray-900">{day}</h3>
+                    <div key={day.num} className={`bg-surface overflow-hidden shadow-sm sm:rounded-lg border ${isToday ? 'border-accent shadow-md ring-1 ring-accent' : 'border-border'}`}>
+                        <div className={`px-6 py-4 border-b flex justify-between items-center ${isToday ? 'bg-accent/5 border-accent/20' : 'border-border'}`}>
+                            <h3 className={`font-semibold ${isToday ? 'text-accent' : 'text-text'}`}>
+                                {day.name} {isToday && <span className="text-xs font-normal ml-2 bg-accent text-white px-2 py-0.5 rounded-full">Hari Ini</span>}
+                            </h3>
+                            <span className="text-xs text-text-muted">{daySchedules.length} Kelas</span>
                         </div>
-                        <div className="divide-y divide-gray-100">
-                            {daySchedules.map(schedule => (
-                                <div key={schedule.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50">
-                                    <div className="flex items-start gap-3">
-                                        <div className="w-1.5 h-full min-h-[40px] rounded-full mt-1" style={{ backgroundColor: schedule.course?.color }}></div>
-                                        <div>
-                                            <p className="font-medium text-gray-900">{schedule.course?.name}</p>
-                                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs text-gray-500">
-                                                <div className="flex items-center gap-1">
-                                                    <Clock size={14} />
-                                                    {schedule.start_time.substring(0, 5)} - {schedule.end_time.substring(0, 5)}
-                                                </div>
-                                                {schedule.room && (
-                                                    <div className="flex items-center gap-1">
-                                                        <MapPin size={14} />
-                                                        {schedule.room}
-                                                    </div>
-                                                )}
-                                                {schedule.lecturer && (
-                                                    <div className="flex items-center gap-1">
-                                                        <span>{schedule.lecturer}</span>
-                                                    </div>
-                                                )}
-                                            </div>
+                        <div className="p-4 space-y-3 min-h-[150px]">
+                            {daySchedules.length === 0 ? (
+                                <div className="h-full flex items-center justify-center text-text-muted text-sm py-8">
+                                    Tidak ada kelas
+                                </div>
+                            ) : (
+                                daySchedules.map(schedule => (
+                                    <div key={schedule.id} className="p-3 rounded-lg bg-gray-50 border border-gray-100 hover:border-gray-200 transition group relative">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <CourseBadge course={schedule.course} className="text-sm" />
+                                            {allowDelete && (
+                                                <button 
+                                                    onClick={() => handleDeleteSchedule(schedule.id)} 
+                                                    className="opacity-0 group-hover:opacity-100 text-xs text-urgent hover:underline transition-opacity"
+                                                >
+                                                    Hapus
+                                                </button>
+                                            )}
+                                        </div>
+                                        <div className="flex justify-between items-center text-xs text-text-secondary">
+                                            <span>{schedule.start_time.substring(0,5)} - {schedule.end_time.substring(0,5)}</span>
+                                            {schedule.room && <span className="bg-white px-1.5 py-0.5 rounded shadow-sm border border-gray-100">{schedule.room}</span>}
                                         </div>
                                     </div>
-                                    
-                                    <div>
-                                        <button onClick={() => deleteSchedule(schedule.id)} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
-                                            <Trash2 size={16} />
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
+                                ))
+                            )}
                         </div>
                     </div>
                 );
             })}
-
-            {schedules.length === 0 && (
-                <div className="bg-white border border-gray-200 rounded-lg p-8 text-center shadow-sm">
-                    <p className="text-gray-500">No classes scheduled yet.</p>
-                </div>
-            )}
         </div>
     );
 }

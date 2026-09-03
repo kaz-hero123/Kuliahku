@@ -1,73 +1,64 @@
 import { Task } from '@/types';
-import { Calendar, CheckCircle2, Clock, Trash2, Pencil } from 'lucide-react';
-import { router } from '@inertiajs/react';
-import { format, isPast, isToday, isTomorrow } from 'date-fns';
+import { useForm } from '@inertiajs/react';
+import { format } from 'date-fns';
+import CourseBadge from '@/Components/Shared/CourseBadge';
 
 interface Props {
     task: Task;
-    onEdit: () => void;
 }
 
-export default function TaskItem({ task, onEdit }: Props) {
-    const isDone = task.status === 'done';
-    
-    const completeTask = () => {
-        if (!isDone) {
-            router.patch(route('tasks.complete', task.id));
-        }
+export default function TaskItem({ task }: Props) {
+    const { patch, delete: destroy } = useForm();
+
+    const handleComplete = () => {
+        patch(route('tasks.complete', task.id), { preserveScroll: true });
     };
-    
-    const deleteTask = () => {
-        if (confirm('Are you sure you want to delete this task?')) {
-            router.delete(route('tasks.destroy', task.id));
+
+    const handleDelete = () => {
+        if (confirm('Yakin ingin menghapus tugas ini?')) {
+            destroy(route('tasks.destroy', task.id), { preserveScroll: true });
         }
     };
 
-    const deadlineDate = new Date(task.deadline);
-    const overdue = isPast(deadlineDate) && !isDone;
-    
-    let deadlineText = format(deadlineDate, 'MMM d, h:mm a');
-    if (isToday(deadlineDate)) deadlineText = `Today, ${format(deadlineDate, 'h:mm a')}`;
-    else if (isTomorrow(deadlineDate)) deadlineText = `Tomorrow, ${format(deadlineDate, 'h:mm a')}`;
+    const isDone = task.status === 'done';
 
     return (
-        <div className={`p-4 flex flex-col sm:flex-row gap-4 bg-white border rounded-lg transition-shadow shadow-sm hover:shadow-md ${isDone ? 'opacity-60 border-gray-200' : (task.priority === 'urgent' ? 'border-red-200' : 'border-gray-200')}`}>
-            <button 
-                onClick={completeTask}
-                className={`mt-1 flex-shrink-0 transition-colors ${isDone ? 'text-green-500 cursor-default' : 'text-gray-300 hover:text-green-500'}`}
-            >
-                <CheckCircle2 size={24} />
-            </button>
-            
-            <div className="flex-1">
-                <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <span className="text-xs px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: task.course?.color }}>
-                        {task.course?.code || task.course?.name}
-                    </span>
-                    {task.priority === 'urgent' && (
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-medium">Urgent</span>
-                    )}
-                </div>
-                
-                <h3 className={`font-medium ${isDone ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
-                    {task.title}
-                </h3>
-                
-                <div className="flex flex-wrap items-center gap-4 mt-2 text-xs">
-                    <div className={`flex items-center gap-1 ${overdue ? 'text-red-600 font-medium' : 'text-gray-500'}`}>
-                        <Calendar size={14} />
-                        {deadlineText}
-                        {overdue && ' (Overdue)'}
+        <div className={`p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition hover:bg-gray-50 ${isDone ? 'opacity-60 bg-gray-50/50' : ''}`}>
+            <div className="flex items-start gap-4">
+                {!isDone ? (
+                    <button 
+                        onClick={handleComplete}
+                        className="mt-1 shrink-0 w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center text-transparent hover:border-success hover:text-success transition-colors"
+                        title="Tandai Selesai"
+                    >
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                    </button>
+                ) : (
+                    <div className="mt-1 shrink-0 w-6 h-6 rounded-full bg-success flex items-center justify-center text-white">
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
                     </div>
+                )}
+                <div>
+                    <h4 className={`font-semibold ${isDone ? 'text-text-muted line-through' : 'text-text'}`}>
+                        {task.title}
+                    </h4>
+                    <div className="flex items-center gap-2 mt-1 text-sm">
+                        <CourseBadge course={task.course} />
+                        {task.priority === 'urgent' && !isDone && (
+                            <span className="text-urgent font-bold text-xs uppercase bg-urgent/10 px-1.5 py-0.5 rounded">Urgent</span>
+                        )}
+                    </div>
+                    {task.description && <p className="text-sm text-text-secondary mt-2">{task.description}</p>}
                 </div>
             </div>
             
-            <div className="flex items-start gap-2">
-                <button onClick={onEdit} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
-                    <Pencil size={16} />
-                </button>
-                <button onClick={deleteTask} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
-                    <Trash2 size={16} />
+            <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-4 sm:gap-2">
+                <div className="text-right">
+                    <p className="text-sm font-medium text-text">{format(new Date(task.deadline), 'HH:mm')}</p>
+                    <p className="text-xs text-text-muted">{format(new Date(task.deadline), 'dd MMM yyyy')}</p>
+                </div>
+                <button onClick={handleDelete} className="text-xs text-urgent hover:underline">
+                    Hapus
                 </button>
             </div>
         </div>
