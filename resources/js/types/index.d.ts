@@ -18,6 +18,10 @@ export interface Course {
     name: string;
     code: string | null;
     color: string;
+    description: string | null;
+    lecturer_name: string | null;
+    lecturer_contact: string | null;
+    syllabus_url: string | null;
 }
 
 export interface Schedule {

@@ -11,7 +11,7 @@ class Course extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'code', 'color'];
+    protected $fillable = ['name', 'code', 'color', 'description', 'lecturer_name', 'lecturer_contact', 'syllabus_url'];
 
     public function user(): BelongsTo
     {
