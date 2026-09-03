@@ -8,10 +8,11 @@ import PrimaryButton from '@/Components/PrimaryButton';
 
 interface Props {
     courses: Course[];
+    defaultCourseId?: number;
     onSuccess?: () => void;
 }
 
-export default function TaskForm({ courses, onSuccess }: Props) {
+export default function TaskForm({ courses, defaultCourseId, onSuccess }: Props) {
     const { data, setData, post, processing, errors, reset } = useForm<{
         title: string;
         description: string;
@@ -21,7 +22,7 @@ export default function TaskForm({ courses, onSuccess }: Props) {
     }>({
         title: '',
         description: '',
-        course_id: courses.length > 0 ? courses[0].id : '',
+        course_id: defaultCourseId || (courses.length > 0 ? courses[0].id : ''),
         deadline: '',
         priority: 'normal',
     });

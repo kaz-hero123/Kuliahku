@@ -4,9 +4,10 @@ import EmptyState from '@/Components/Shared/EmptyState';
 
 interface Props {
     tasks: Task[];
+    hideCourseBadge?: boolean;
 }
 
-export default function TaskList({ tasks }: Props) {
+export default function TaskList({ tasks, hideCourseBadge = false }: Props) {
     if (tasks.length === 0) {
         return (
             <EmptyState 
@@ -19,7 +20,7 @@ export default function TaskList({ tasks }: Props) {
     return (
         <div className="divide-y divide-border">
             {tasks.map(task => (
-                <TaskItem key={task.id} task={task} />
+                <TaskItem key={task.id} task={task} hideCourseBadge={hideCourseBadge} />
             ))}
         </div>
     );

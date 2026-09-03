@@ -5,9 +5,10 @@ import CourseBadge from '@/Components/Shared/CourseBadge';
 
 interface Props {
     task: Task;
+    hideCourseBadge?: boolean;
 }
 
-export default function TaskItem({ task }: Props) {
+export default function TaskItem({ task, hideCourseBadge = false }: Props) {
     const { patch, delete: destroy } = useForm();
 
     const handleComplete = () => {
@@ -43,7 +44,7 @@ export default function TaskItem({ task }: Props) {
                         {task.title}
                     </h4>
                     <div className="flex items-center gap-2 mt-1 text-sm">
-                        <CourseBadge course={task.course} />
+                        {!hideCourseBadge && <CourseBadge course={task.course} />}
                         {task.priority === 'urgent' && !isDone && (
                             <span className="text-urgent font-bold text-xs uppercase bg-urgent/10 px-1.5 py-0.5 rounded">Urgent</span>
                         )}

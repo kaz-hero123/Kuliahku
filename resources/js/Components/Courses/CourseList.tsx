@@ -1,5 +1,5 @@
 import { Course } from '@/types';
-import { useForm } from '@inertiajs/react';
+import { useForm, Link } from '@inertiajs/react';
 import EmptyState from '@/Components/Shared/EmptyState';
 
 interface Props {
@@ -28,17 +28,19 @@ export default function CourseList({ courses }: Props) {
         <div className="bg-surface border border-border sm:rounded-lg overflow-hidden">
             <ul className="divide-y divide-border">
                 {courses.map(course => (
-                    <li key={course.id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition">
-                        <div className="flex items-center gap-3">
+                    <li key={course.id} className="flex items-center justify-between hover:bg-gray-50 transition relative group">
+                        <Link href={route('courses.show', course.id)} className="flex-1 p-4 flex items-center gap-3">
                             <span className="w-3 h-3 rounded-full" style={{ backgroundColor: course.color }}></span>
                             <div>
-                                <h4 className="font-semibold text-text">{course.name}</h4>
+                                <h4 className="font-semibold text-text group-hover:text-accent transition-colors">{course.name}</h4>
                                 {course.code && <p className="text-xs text-text-muted font-mono">{course.code}</p>}
                             </div>
+                        </Link>
+                        <div className="p-4 pl-0">
+                            <button onClick={() => handleDeleteCourse(course.id)} className="text-xs text-urgent hover:underline">
+                                Hapus
+                            </button>
                         </div>
-                        <button onClick={() => handleDeleteCourse(course.id)} className="text-xs text-urgent hover:underline">
-                            Hapus
-                        </button>
                     </li>
                 ))}
             </ul>
