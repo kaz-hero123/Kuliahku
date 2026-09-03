@@ -29,6 +29,7 @@
         "@laravel/multiplex": "^0.4.1"
     },
     "dependencies": {
+        "@hello-pangea/dnd": "^18.0.1",
         "date-fns": "^4.4.0",
         "lucide-react": "^1.39.0"
     }
