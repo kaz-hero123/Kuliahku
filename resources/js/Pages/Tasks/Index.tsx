@@ -1,44 +1,37 @@
 import AppLayout from '@/Components/Layout/AppLayout';
-import PageHeader from '@/Components/Layout/PageHeader';
-import TaskList from '@/Components/Tasks/TaskList';
-import TaskForm from '@/Components/Tasks/TaskForm';
-import { Course, Task } from '@/types';
 import { useState } from 'react';
+import { TasksPageProps } from '@/types';
+import TaskForm from '@/Components/Tasks/TaskForm';
+import TaskList from '@/Components/Tasks/TaskList';
+import PrimaryButton from '@/Components/PrimaryButton';
 
-interface Props {
-    tasks: Task[];
-    courses: Course[];
-    filters: any;
-}
-
-export default function TasksPage({ tasks, courses, filters }: Props) {
+export default function TasksIndex({ tasks, courses, filters }: TasksPageProps) {
     const [showForm, setShowForm] = useState(false);
 
     return (
-        <AppLayout title="Tasks">
-            <PageHeader 
-                title="Tasks" 
-                description="Manage your assignments and to-dos." 
-                action={
-                    <button 
-                        onClick={() => setShowForm(!showForm)}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
-                    >
-                        {showForm ? 'Cancel' : 'New Task'}
-                    </button>
-                }
-            />
-            
-            <div className="flex flex-col gap-6">
-                {showForm && (
-                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                        <h3 className="font-medium text-gray-900 mb-4">Create New Task</h3>
-                        <TaskForm courses={courses} onSuccess={() => setShowForm(false)} onCancel={() => setShowForm(false)} />
+        <AppLayout 
+            title="Daftar Tugas"
+            headerAction={
+                <PrimaryButton onClick={() => setShowForm(!showForm)}>
+                    {showForm ? 'Batal' : '+ Tugas Baru'}
+                </PrimaryButton>
+            }
+        >
+            <div className="py-8">
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                    {showForm && (
+                        <div className="bg-surface overflow-hidden shadow-sm sm:rounded-lg p-6 border border-border">
+                            <h3 className="text-lg font-semibold text-text mb-4">Tugas Baru</h3>
+                            <TaskForm 
+                                courses={courses} 
+                                onSuccess={() => setShowForm(false)} 
+                            />
+                        </div>
+                    )}
+
+                    <div className="bg-surface overflow-hidden shadow-sm sm:rounded-lg border border-border">
+                        <TaskList tasks={tasks} />
                     </div>
-                )}
-                
-                <div>
-                    <TaskList tasks={tasks} courses={courses} />
                 </div>
             </div>
         </AppLayout>

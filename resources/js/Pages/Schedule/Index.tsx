@@ -1,40 +1,29 @@
 import AppLayout from '@/Components/Layout/AppLayout';
-import PageHeader from '@/Components/Layout/PageHeader';
+import { Schedule, Course, PageProps } from '@/types';
 import WeeklyGrid from '@/Components/Schedule/WeeklyGrid';
-import ScheduleForm from '@/Components/Schedule/ScheduleForm';
-import { Course, Schedule } from '@/types';
+import { Link } from '@inertiajs/react';
 
-interface Props {
+interface ScheduleProps extends PageProps {
     schedules: Schedule[];
     courses: Course[];
 }
 
-export default function SchedulePage({ schedules, courses }: Props) {
-    if (courses.length === 0) {
-        return (
-            <AppLayout title="Schedule">
-                <PageHeader title="Weekly Schedule" />
-                <div className="bg-white border border-gray-200 rounded-lg p-8 text-center shadow-sm">
-                    <p className="text-gray-500 mb-4">You need to add courses before creating a schedule.</p>
-                </div>
-            </AppLayout>
-        );
-    }
-
+export default function ScheduleIndex({ schedules }: ScheduleProps) {
     return (
-        <AppLayout title="Schedule">
-            <PageHeader title="Weekly Schedule" description="Manage your class times." />
-            
-            <div className="flex flex-col md:flex-row gap-8">
-                <div className="w-full md:w-1/3">
-                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm sticky top-8">
-                        <h3 className="font-medium text-gray-900 mb-4">Add Class Time</h3>
-                        <ScheduleForm courses={courses} />
-                    </div>
-                </div>
-                
-                <div className="w-full md:w-2/3">
-                    <WeeklyGrid schedules={schedules} />
+        <AppLayout 
+            title="Jadwal Mingguan"
+            headerAction={
+                <Link 
+                    href={route('settings.index')} 
+                    className="inline-flex items-center px-4 py-2 bg-surface border border-border rounded-md font-semibold text-xs text-text-secondary uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition ease-in-out duration-150"
+                >
+                    Atur Jadwal
+                </Link>
+            }
+        >
+            <div className="py-8">
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <WeeklyGrid schedules={schedules} allowDelete={false} />
                 </div>
             </div>
         </AppLayout>
