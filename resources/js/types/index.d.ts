@@ -51,3 +51,31 @@ export interface FocusNow {
     nextClass?: Schedule;
     minutesUntilClass?: number;
 }
+
+export interface TodayPageProps extends PageProps {
+    todayClasses: Schedule[];
+    tasksDueToday: Task[];
+    focusNow: FocusNow;
+    upcomingDeadlines: Task[];
+    overdueCount: number;
+}
+
+export interface DeadlinesPageProps extends PageProps {
+    groupedTasks: {
+        overdue: Task[];
+        today: Task[];
+        tomorrow: Task[];
+        thisWeek: Task[];
+        later: Task[];
+    };
+}
+
+export interface TasksPageProps extends PageProps {
+    tasks: Task[];
+    courses: Course[];
+    filters: {
+        status?: string;
+        course?: string;
+        priority?: string;
+    };
+}
