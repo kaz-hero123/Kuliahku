@@ -8,6 +8,7 @@ use App\Http\Controllers\DeadlineController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\OnboardingController;
+use App\Http\Controllers\ChatController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -48,7 +49,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Onboarding
     Route::get('/onboarding', [OnboardingController::class, 'index'])->name('onboarding');
     Route::post('/onboarding', [OnboardingController::class, 'complete'])->name('onboarding.complete');
-    
+    // Chat API
+    Route::post('/chat/ask', [ChatController::class, 'ask'])->name('chat.ask');
+
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
