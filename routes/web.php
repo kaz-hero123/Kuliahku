@@ -33,10 +33,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Task CRUD
     Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
     Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
+    Route::patch('/tasks/{task}/status', [TaskController::class, 'updateStatus'])->name('tasks.updateStatus');
     Route::patch('/tasks/{task}/complete', [TaskController::class, 'complete'])->name('tasks.complete');
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 
     // Course CRUD
+    Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show');
     Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
     Route::put('/courses/{course}', [CourseController::class, 'update'])->name('courses.update');
     Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('courses.destroy');

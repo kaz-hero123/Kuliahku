@@ -26,6 +26,10 @@ class CourseRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'code' => ['nullable', 'string', 'max:50'],
             'color' => ['required', 'string', 'max:7'],
+            'description' => ['nullable', 'string'],
+            'lecturer_name' => ['nullable', 'string', 'max:255'],
+            'lecturer_contact' => ['nullable', 'string', 'max:255'],
+            'syllabus_url' => ['nullable', 'url', 'max:2048'],
         ];
     }
 }

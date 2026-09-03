@@ -52,6 +52,21 @@ class TaskController extends Controller
         return back()->with('success', 'Tugas diperbarui.');
     }
 
+    public function updateStatus(Request $request, Task $task)
+    {
+        if ($request->user()->id !== $task->user_id) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'status' => 'required|in:todo,in_progress,done',
+        ]);
+
+        $task->update($validated);
+
+        return back();
+    }
+
     public function complete(Request $request, Task $task)
     {
         if ($request->user()->id !== $task->user_id) {
